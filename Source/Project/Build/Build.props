@@ -1,0 +1,35 @@
+<Project>
+	<PropertyGroup Label="Initial">
+		<Company>Region Örebro län</Company>
+		<VersionPrefix>1.0.0</VersionPrefix>
+		<VersionPrereleaseName></VersionPrereleaseName>
+	</PropertyGroup>
+	<PropertyGroup Label="Assembly">
+		<AssemblyName>RegionOrebroLan.PowerShell.IO</AssemblyName>
+		<AssemblyOriginatorKeyFile>$(SolutionDir).Global\Signing\StrongName.snk</AssemblyOriginatorKeyFile>
+		<AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
+		<CodeAnalysisRuleSet>CodeAnalysis\Rules.ruleset</CodeAnalysisRuleSet>
+		<DelaySign>false</DelaySign>
+		<Description>PowerShell commands for IO.</Description>
+		<FileVersion>$(VersionPrefix).0</FileVersion>
+		<RootNamespace>$(AssemblyName)</RootNamespace>
+		<SignAssembly>true</SignAssembly>
+		<TargetFramework>net46</TargetFramework>
+		<Version>$(VersionPrefix)</Version>
+		<Version Condition="$(VersionPrereleaseName) != ''">$(Version)-$(VersionPrereleaseName)</Version>
+	</PropertyGroup>
+	<PropertyGroup Label="NuGet-Package">
+		<Authors>$(Company)</Authors>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<NoPackageAnalysis>true</NoPackageAnalysis>
+		<NuspecFile>Project.nuspec</NuspecFile>
+		<PackageProjectUrl>https://github.com/RegionOrebroLan/PowerShell-IO/</PackageProjectUrl>
+		<PackageTags>file-matcher file-matching filematcher filesystementry-matcher filesystementry-matching filesystementrymatcher io powershell wildcard</PackageTags>
+	</PropertyGroup>
+	<PropertyGroup Label="PowerShell-Module">
+		<PowerShellModuleGuid>c5422672-d98c-49be-a670-e20b350f19ce</PowerShellModuleGuid>
+		<PowerShellModuleName>RegionOrebroLan.IO</PowerShellModuleName>
+		<!-- The following tags are needed in the NuGet-package to get it working as a PS-Module-package. At least the first tag, PSModule, is required. -->
+		<PowerShellModulePackageRequiredTags>PSModule PSIncludes_Cmdlet PSCmdlet_Get-FileSystemEntryPathMatch PSCommand_Get-FileSystemEntryPathMatch</PowerShellModulePackageRequiredTags>
+	</PropertyGroup>
+</Project>

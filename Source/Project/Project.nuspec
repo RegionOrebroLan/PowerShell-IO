@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+	<metadata>
+		<authors>$Authors$</authors>
+		<dependencies>
+			<group targetFramework=".NETFramework$TargetFrameworkVersionNumber$" />
+		</dependencies>
+		<description>$Description$</description>
+		<id>$Id$</id>
+		<owners>$Owners$</owners>
+		<projectUrl>$ProjectUrl$</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<tags>$Tags$</tags>
+		<version>$Version$</version>
+	</metadata>
+	<files>
+		<file src="$AssemblyFilePattern$" />
+		<file src="$PowerShellModuleManifestFilePattern$" />
+		<file src="$SymbolFilePattern$" />
+	</files>
+</package>

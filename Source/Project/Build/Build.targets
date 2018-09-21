@@ -1,0 +1,72 @@
+<Project>
+	<Target Name="AdditionalCleanup" AfterTargets="Clean" DependsOnTargets="EnsureProperties">
+		<ItemGroup>
+			<_FileToDelete Include="$(PackageOutputPath)**\*.*" />
+		</ItemGroup>
+		<Delete Files="@(_FileToDelete)" />
+		<RemoveDir Directories="$(PowerShellModuleDirectoryPath)" />
+	</Target>
+	<Target Name="BuildPowerShellModuleManifest" BeforeTargets="BeforeBuild" DependsOnTargets="EnsurePowerShellModuleDirectory">
+		<PropertyGroup>
+			<_PowerShellVersion>5.0</_PowerShellVersion>
+		</PropertyGroup>
+		<ItemGroup>
+			<_PowerShellModuleManifestLine Include="@{" />
+			<_PowerShellModuleManifestLine Include="%09Author = %22$(Authors)%22" />
+			<_PowerShellModuleManifestLine Include="%09CompanyName = %22$(Company)%22" />
+			<_PowerShellModuleManifestLine Include="%09Description = %22$(Description)%22" />
+			<_PowerShellModuleManifestLine Include="%09DotNetFrameworkVersion = %22$(TargetFrameworkVersion.Replace('v', ''))%22" />
+			<_PowerShellModuleManifestLine Include="%09GUID = %22$(PowerShellModuleGuid)%22" />
+			<_PowerShellModuleManifestLine Include="%09HelpInfoURI = %22$(PackageProjectUrl)%22" />
+			<_PowerShellModuleManifestLine Include="%09ModuleVersion = %22$(VersionPrefix)%22" />
+			<_PowerShellModuleManifestLine Include="%09PowerShellVersion = %22$(_PowerShellVersion)%22" />
+			<_PowerShellModuleManifestLine Include="%09PrivateData = @{" />
+			<_PowerShellModuleManifestLine Include="%09%09PSData = @{" />
+			<_PowerShellModuleManifestLine Condition="$(VersionPrereleaseName) != ''" Include="%09%09%09Prerelease = %22$(VersionPrereleaseName)%22" />
+			<_PowerShellModuleManifestLine Include="%09%09%09ProjectUri = %22$(PackageProjectUrl)%22" />
+			<_PowerShellModuleManifestLine Include="%09%09%09Tags = %22$(PackageTags)%22" />
+			<_PowerShellModuleManifestLine Include="%09%09}" />
+			<_PowerShellModuleManifestLine Include="%09}" />
+			<_PowerShellModuleManifestLine Include="%09RootModule = %22$(AssemblyName).dll%22" />
+			<_PowerShellModuleManifestLine Include="}" />
+		</ItemGroup>
+		<WriteLinesToFile File="$(PowerShellModuleManifestFilePath)" Lines="@(_PowerShellModuleManifestLine)" Overwrite="true" />
+	</Target>
+	<Target Name="EnsureAdditionalOutput" AfterTargets="Build" DependsOnTargets="EnsurePowerShellModuleDirectory">
+		<Copy DestinationFolder="$(PackageOutputPath)" SourceFiles="Publish-Module.ps1" />
+		<Copy DestinationFolder="$(PackageOutputPath)" SourceFiles="Publish-Module-As-NuGet-Package.ps1" />
+		<ItemGroup>
+			<_AdditionalPowerShellModuleFile Include="$(OutputPath)**\*.dll" />
+			<_AdditionalPowerShellModuleFile Condition="$(Configuration) == 'Debug'" Include="$(OutputPath)**\*.pdb" />
+		</ItemGroup>
+		<Copy DestinationFolder="$(PowerShellModuleDirectoryPath)" SourceFiles="@(_AdditionalPowerShellModuleFile)" />
+	</Target>
+	<Target Name="EnsureNuspecProperties" BeforeTargets="BeforeBuild" DependsOnTargets="BuildPowerShellModuleManifest">
+		<PropertyGroup>
+			<_SymbolFilePattern>$(OutputPath)*.non-existing-file</_SymbolFilePattern>
+			<_SymbolFilePattern Condition="$(Configuration) == 'Debug'">$(OutputPath)*.pdb</_SymbolFilePattern>
+		</PropertyGroup>
+		<PropertyGroup>
+			<NuspecProperties>AssemblyFilePattern=$(OutputPath)*.dll;Authors=$(Authors);Description=$(Description);Id=$(PowerShellModuleName);Owners=$(Company);PowerShellModuleManifestFilePattern=$(PowerShellModuleDirectoryPath)*.psd1;ProjectUrl=$(PackageProjectUrl);SymbolFilePattern=$(_SymbolFilePattern);Tags=$(PackageTags) $(PowerShellModulePackageRequiredTags);TargetFrameworkVersionNumber=$(TargetFrameworkVersionNumber);Version=$(Version)</NuspecProperties>
+		</PropertyGroup>
+	</Target>
+	<Target Name="EnsurePowerShellModuleDirectory" DependsOnTargets="EnsureProperties">
+		<MakeDir Condition="!Exists('$(PowerShellModuleDirectoryPath)')" Directories="$(PowerShellModuleDirectoryPath)" />
+	</Target>
+	<Target Name="EnsureProperties">
+		<PropertyGroup>
+			<PowerShellModuleDirectoryPath>$(PackageOutputPath)$(PowerShellModuleName)\</PowerShellModuleDirectoryPath>
+			<PowerShellModuleManifestFilePath>$(PowerShellModuleDirectoryPath)$(PowerShellModuleName).psd1</PowerShellModuleManifestFilePath>
+			<TargetFrameworkVersionNumber>$(TargetFrameworkVersion.Replace("v", ""))</TargetFrameworkVersionNumber>
+		</PropertyGroup>
+	</Target>
+	<Target Name="HandleAssemblyOriginatorKeyFile" BeforeTargets="BeforeBuild" Condition="$(SignAssembly) AND !Exists('$(AssemblyOriginatorKeyFile)')">
+		<PropertyGroup>
+			<_DevelopmentAssemblyOriginatorKeyFile>$(SolutionDir).Global\Signing\StrongName.Development.snk</_DevelopmentAssemblyOriginatorKeyFile>
+		</PropertyGroup>
+		<Warning Text="The strong-name-key-file '$(AssemblyOriginatorKeyFile)' does not exist. The strong-name-key-file '$(_DevelopmentAssemblyOriginatorKeyFile)' is used instead." />
+		<PropertyGroup>
+			<AssemblyOriginatorKeyFile>$(_DevelopmentAssemblyOriginatorKeyFile)</AssemblyOriginatorKeyFile>
+		</PropertyGroup>
+	</Target>
+</Project>
