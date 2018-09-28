@@ -24,7 +24,7 @@
 			<_PowerShellModuleManifestLine Include="%09%09PSData = @{" />
 			<_PowerShellModuleManifestLine Condition="$(VersionPrereleaseName) != ''" Include="%09%09%09Prerelease = %22$(VersionPrereleaseName)%22" />
 			<_PowerShellModuleManifestLine Include="%09%09%09ProjectUri = %22$(PackageProjectUrl)%22" />
-			<_PowerShellModuleManifestLine Include="%09%09%09Tags = %22$(PackageTags)%22" />
+			<_PowerShellModuleManifestLine Include="%09%09%09Tags = %22$(PackageTags.Replace(' ', '%22, %22'))%22" />
 			<_PowerShellModuleManifestLine Include="%09%09}" />
 			<_PowerShellModuleManifestLine Include="%09}" />
 			<_PowerShellModuleManifestLine Include="%09RootModule = %22$(AssemblyName).dll%22" />
